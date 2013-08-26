@@ -1,0 +1,23 @@
+{
+  "name": "knightrider",
+  "description": "arduino game for reasons.to",
+  "version": "0.0.1",
+  "private": true,
+  "author": {
+    "name": "Wouter Verweirder"
+  },
+  "dependencies": {
+    "express": "latest",
+    "socket.io": "latest",
+    "firmata": "latest",
+    "grunt": "latest"
+  },
+  "devDependencies": {
+    "grunt-contrib-concat": "latest",
+    "grunt-contrib-uglify": "latest",
+    "grunt-contrib-jshint": "latest",
+    "grunt-contrib-watch": "latest",
+    "grunt-contrib-compass": "latest",
+    "grunt-contrib-copy": "latest"
+  }
+}
