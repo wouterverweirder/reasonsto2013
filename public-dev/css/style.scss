@@ -1,20 +1,44 @@
 @import "compass/reset";
 
+@font-face {
+	font-weight: normal !important;
+	font-style: normal;
+	font-family: 'Ruben';
+	src: url('/fonts/ruben-webfont.eot');
+	src: url('/fonts/ruben-webfont.eot?#iefix') format('embedded-opentype'),
+             url('/fonts/ruben-webfont.woff') format('woff'),
+             url('/fonts/ruben-webfont.ttf') format('truetype'),
+             url('/fonts/ruben-webfont.svg#Ruben') format('svg');
+}
+
+html,
 body {
+    width: 100%;
+    height: 100%;
+}
+html {
+    display: table;
+}
+body {
+    display: table-cell;
+    vertical-align: middle;
 	background-color: black;
 	color: white;
+	font-family: 'Ruben';
+	text-align: center;
 }
 
 #background {
 	position: absolute;
+	left: 0;
+	top: 0;
 	z-index: 0;
 	width: 0%;
 	height: 100%;
 	background-color: red;
 }
 
-#gameState {
+#container {
 	position: relative;
 	z-index: 1;
-	color: white;
 }

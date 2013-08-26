@@ -15,7 +15,8 @@ var GAME_STATES = {
 var Game = function(board) {
 	this.board = board;
 	this.gameState = GAME_STATES.WAITING;
-	this.gameIntervalId = false;
+	this.playerTimeout = false;
+	this.testInterval = false;
 	this.leds = [
 		{pin: 8, state: false},
 		{pin: 9, state: false},
@@ -23,20 +24,19 @@ var Game = function(board) {
 		{pin: 11, state: false}
 	];
 	this.ledCounter = 0;
+	this.activeLedCounter = 0;
+	this.activeLedDirection = 1;
 	this.numLeds = this.leds.length;
 	if(this.board) {
 		for(var i = 0; i < this.numLeds; i++) {
 			this.board.pinMode(this.leds[i].pin, board.MODES.OUTPUT);
 		}
 	}
-	this.ledSpeed = 500; //time when each led needs to be triggered
 	this.playerTime = 1000; //time a player has to press the screen on time
-	this.requiredQueueSize = Math.ceil(this.playerTime / this.ledSpeed);
 	this.admins = [];
 	this.players = [];
 	this.numPlayersOverTime = 0;
-	this.activePlayers = [];
-	this.numActivePlayers = 0;
+	this.activePlayer = false;
 	this.numPlayers = 0;
 	this.startServer();
 };
@@ -55,7 +55,8 @@ Game.prototype.startServer = function() {
 Game.prototype.setGameState = function(gameState) {
 	this.gameState = gameState;
 	this.sendGameStateToAdmins(gameState);
-	clearInterval(this.gameIntervalId);
+	clearTimeout(this.playerTimeout);
+	clearInterval(this.testInterval);
 	switch(this.gameState) {
 		case GAME_STATES.WAITING: return this.onGameStateWaiting();
 		case GAME_STATES.STARTED: return this.onGameStateStarted();
@@ -71,74 +72,69 @@ Game.prototype.onGameStateWaiting = function() {
 };
 
 Game.prototype.onGameStateStarted = function() {
-	this.activePlayers = [];
-	this.numActivePlayers = 0;
+	this.activePlayer = false;
 	this.ledCounter = 0;
+	this.activeLedCounter = 0;
+	this.activeLedDirection = 1;
+	this.onLedCounterChanged();
 	for(var i = 0; i < this.numPlayers; i++) {
 		var player = this.players[i];
 		player.setPlayerState(Player.PLAYER_STATES.WAIT_FOR_TURN);
 	}
-	this.gameIntervalId = setInterval(this.onGameIntervalCallback.bind(this), this.ledSpeed);
-	this.onGameIntervalCallback();
+	this.activateNextPlayer();
+	//test
+	//this.testInterval = setInterval(this.onActivePlayerTrigger.bind(this), 200);
 };
 
-Game.prototype.onGameIntervalCallback = function() {
-	if(this.numPlayers < this.requiredQueueSize) {
-		return;
+Game.prototype.onActivePlayerTrigger = function() {
+	this.ledCounter++;
+	this.activeLedCounter += this.activeLedDirection;
+	if(this.activeLedCounter <= 0 || (this.activeLedCounter + 1) >= this.numLeds) {
+		this.activeLedDirection *= -1;
 	}
-	if(this.numActivePlayers < this.requiredQueueSize) {
-		if(this.numActivePlayers == 0) {
-			this.activatePlayer(this.players[0]);
+	this.onLedCounterChanged();
+	this.activateNextPlayer();
+};
+
+Game.prototype.onLedCounterChanged = function() {
+	for(var i = 0; i < this.numLeds; i++) {
+		this.leds[i].state = (this.activeLedCounter == i);
+		if(this.board) {
+			this.board.digitalWrite(this.leds[i].pin, (this.leds[i].state) ? 1 : 0);
 		}
-		var lastActivePlayerIndex = this.players.indexOf(this.activePlayers[this.numActivePlayers - 1]);
-		while(this.numActivePlayers < this.requiredQueueSize) {
-			lastActivePlayerIndex++;
-			if(lastActivePlayerIndex >= this.numPlayers) {
-				lastActivePlayerIndex = 0;
-			}
+	}
+	this.sendLedStates();
+};
+
+Game.prototype.activateNextPlayer = function() {
+	if(this.gameState == GAME_STATES.STARTED) {
+		var previousPlayer = this.activePlayer;
+		if(previousPlayer) {
+			this.deactivatePlayer(previousPlayer);
+		}
+		var lastActivePlayerIndex = 1 + this.players.indexOf(previousPlayer);
+		if(lastActivePlayerIndex >= this.numPlayers) {
+			lastActivePlayerIndex = 0;
+		}
+		if(lastActivePlayerIndex < this.numPlayers) {
 			this.activatePlayer(this.players[lastActivePlayerIndex]);
 		}
 	}
-	/*
-	if(this.activePlayers[0].hasTriggered) {
-		this.ledCounter++;
-	} else {
-		//console.log('no trigger');
-	}
-	*/
-	this.ledCounter++;
-	for(var i = 0; i < this.numLeds; i++) {
-		this.leds[i].state = ((this.ledCounter % this.numLeds) == i);
-		this.board.digitalWrite(this.leds[i].pin, (this.leds[i].state) ? 1 : 0);
-	}
-	this.sendLedStates();
-	this.deactivatePlayer(this.activePlayers[0]);
-	lastActivePlayerIndex = 1 + this.players.indexOf(this.activePlayers[this.numActivePlayers - 1]);
-	if(lastActivePlayerIndex >= this.numPlayers) {
-		lastActivePlayerIndex = 0;
-	}
-	this.activatePlayer(this.players[lastActivePlayerIndex]);
 };
 
 Game.prototype.activatePlayer = function(player) {
-	var timeLeft = this.playerTime - (this.requiredQueueSize - this.numActivePlayers - 1) * this.ledSpeed;
-	player.socket.on('trigger', function(){
-		player.hasTriggered = true;
-	});
-	player.setPlayerState(Player.PLAYER_STATES.YOUR_TURN, timeLeft, this.playerTime);
-	this.activePlayers.push(player);
-	this.numActivePlayers++;
+	player.setPlayerState(Player.PLAYER_STATES.YOUR_TURN, this.playerTime, this.playerTime);
+	this.activePlayer = player;
+	player.on('trigger', this.onActivePlayerTrigger.bind(this));
+	this.playerTimeout = setTimeout(this.activateNextPlayer.bind(this), this.playerTime);
 };
 
 Game.prototype.deactivatePlayer = function(player) {
-	player.socket.removeAllListeners('trigger');
-	player.hasTriggered = false;
+	clearTimeout(this.playerTimeout);
+	player.removeAllListeners('trigger');
 	player.setPlayerState(Player.PLAYER_STATES.WAIT_FOR_TURN);
-	var index = this.activePlayers.indexOf(player);
-	if(index > -1) {
-		this.activePlayers.splice(index, 1);
-		this.numActivePlayers--;
-	}
+	player.hasTriggered = false;
+	this.activePlayer = false;
 };
 
 Game.prototype.onGameStateFinished = function() {
@@ -176,7 +172,7 @@ Game.prototype.onAdminJoin = function(socket) {
 	  });
 	}
 	if(ip) {
-		admin.socket.emit('ip', ip);
+		admin.sendIp(ip);
 	}
 };
 
@@ -217,12 +213,11 @@ Game.prototype.onPlayerDisconnect = function(player){
 	if(index > -1) {
 		this.players.splice(index, 1);
 	}
-	var index = this.activePlayers.indexOf(player);
-	if(index > -1) {
-		this.deactivatePlayer(player);
-	}
 	this.numPlayers--;
 	this.sendPlayerCount();
+	if(player == this.activePlayer) {
+		this.activateNextPlayer();
+	}
 };
 
 Game.prototype.sendPlayerCount = function(){
@@ -234,8 +229,9 @@ Game.prototype.sendPlayerCount = function(){
 
 Game.prototype.sendLedStates = function(){
 	var adminCount = this.admins.length;
+	console.log('sendLedStates to ' + adminCount + " admins");
 	for(var i = 0; i < adminCount; i++) {
-		this.admins[i].sendLedStates(this.leds);
+		this.admins[i].sendLedStates(this.ledCounter, this.leds);
 	}
 };
 

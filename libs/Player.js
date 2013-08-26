@@ -12,6 +12,7 @@ var Player = function(socket, playerState, nr) {
 	this.nr = nr;
 	this.hasTriggered = false;
 	this.socket.on('disconnect', this.onDisconnect.bind(this));
+	this.socket.on('trigger', this.onTrigger.bind(this));
 	this.setPlayerState(playerState);
 };
 
@@ -24,6 +25,13 @@ Player.prototype.setPlayerState = function(playerState, timeLeft, timeTotal) {
 		timeLeft: timeLeft,
 		timeTotal: timeTotal
 	});
+};
+
+Player.prototype.onTrigger = function(){
+	if(this.playerState == PLAYER_STATES.YOUR_TURN) {
+		this.hasTriggered = true;
+		this.emit('trigger');
+	}
 };
 
 Player.prototype.onDisconnect = function(){

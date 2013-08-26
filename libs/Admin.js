@@ -17,12 +17,16 @@ Admin.prototype.onDisconnect = function(){
 	this.emit('disconnect');
 };
 
+Admin.prototype.sendIp = function(ip){
+	this.socket.emit('ip', ip);
+};
+
 Admin.prototype.sendPlayerCount = function(playerCount) {
 	this.socket.emit('playerCount', playerCount);
 };
 
-Admin.prototype.sendLedStates = function(leds) {
-	this.socket.emit('ledStates', leds);
+Admin.prototype.sendLedStates = function(ledCounter, leds) {
+	this.socket.emit('ledStates', {counter: ledCounter, leds: leds});
 };
 
 Admin.prototype.sendGameState = function(gameState) {

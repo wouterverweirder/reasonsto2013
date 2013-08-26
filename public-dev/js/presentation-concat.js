@@ -14100,14 +14100,8 @@ window.shower = window.shower || (function(window, document, undefined) {
 		socket.on('playerCount', function(playerCount){
 			$('#playerCount').html(playerCount);
 		});
-		socket.on('ledStates', function(leds){
-			var html = "";
-			for(var i = 0; i < leds.length; i++) {
-				html += '<div class="led ';
-				html += (leds[i].state) ? 'on' : 'off';
-				html += '"/>';
-			}
-			$('#leds').html(html);
+		socket.on('ledStates', function(data){
+			$('#ledCounter').html(data.counter);
 		});
 		socket.on('ip', function(ip){
 			$('.ip-address').html(ip);
@@ -14119,7 +14113,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 
 	function initCamera() {
 		if (hasGetUserMedia()) {
-			navigator.webkitGetUserMedia({video: true, audio: true}, function(localMediaStream){
+			navigator.webkitGetUserMedia({"video": { "mandatory": { "minWidth": "1280", "minHeight": "720" } }}, function(localMediaStream){
 				$('#cameraVideo').attr('src', window.URL.createObjectURL(localMediaStream));
 			}, function(error){
 			});
@@ -14132,7 +14126,6 @@ window.shower = window.shower || (function(window, document, undefined) {
 	}
 
 	function onStartGameClick() {
-		console.log('start game click');
 		socket.emit('gameState', GAME_STATES.STARTED);
 	}
 
@@ -14143,6 +14136,12 @@ window.shower = window.shower || (function(window, document, undefined) {
 	function onGameStateChanged(gameState) {
 		$startGameButton.toggle(gameState == GAME_STATES.WAITING || gameState == GAME_STATES.FINISHED);
 		$endGameButton.toggle(gameState == GAME_STATES.STARTED);
+		if(gameState == GAME_STATES.STARTED) {
+			$('#knightRiderTheme')[0].play();
+		} else {
+			$('#knightRiderTheme')[0].pause();
+			$('#knightRiderTheme')[0].currentTime = 0;
+		}
 	}
 
 	init();

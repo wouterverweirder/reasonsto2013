@@ -59,15 +59,23 @@
 
     <section class="slide cover" id="gameSlide"><div>
       <video id="cameraVideo" autoplay></video>
+      <audio id="knightRiderTheme">
+        <source src="/audio/knight-rider-theme.mp3"/>
+      </audio>
       <div class="game-container">
         <div>
-          <p><span id="playerCount">0</span> players connected</p>
-          <button class="btn btn-primary" id="startGameButton">Start Game</button>
-          <button class="btn btn-danger" id="endGameButton">End Game</button>
-          <div id="leds"></div>
+          <div><span id="playerCount">0</span> players connected</div>
+          <button id="startGameButton">Start K.I.T.T.</button>
+          <button id="endGameButton">Stop K.I.T.T.</button>
+          <div style="margin-top: 50px; margin-bottom: -50px;">Scans Executed:</div>
+          <div id="ledCounter">0</div>
         </div>
       </div>
       <div class="ip-address"></div>
+    </div></section>
+
+    <section class="slide cover"><div>
+      <img src="/slides/10.png" />
     </div></section>
 
     <script type="text/javascript" src="/js/presentation.min.js"></script>

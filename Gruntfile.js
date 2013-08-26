@@ -91,7 +91,13 @@ module.exports = function(grunt) {
       main: {
         expand: true,
         cwd: 'public-dev/',
-        src: ['*.html', 'shower/**'],
+        src: ['shower/**'],
+        dest: 'public/',
+      },
+      html: {
+        expand: true,
+        cwd: 'public-dev/',
+        src: ['*.html'],
         dest: 'public/',
       },
       slides: {
@@ -104,6 +110,12 @@ module.exports = function(grunt) {
         expand: true,
         cwd: 'public-dev/',
         src: ['fonts/**'],
+        dest: 'public/',
+      },
+      audio: {
+        expand: true,
+        cwd: 'public-dev/',
+        src: ['audio/**'],
         dest: 'public/',
       }
     },
@@ -125,7 +137,7 @@ module.exports = function(grunt) {
       },
       html: {
         files: ['public-dev/*.html'],
-        tasks: ['copy'],
+        tasks: ['copy:html'],
         spawn: false
       },
       slides: {
@@ -136,6 +148,11 @@ module.exports = function(grunt) {
       fonts: {
         files: ['public-dev/fonts/*'],
         tasks: ['copy:fonts'],
+        spawn: false
+      },
+      audio: {
+        files: ['public-dev/audio/*'],
+        tasks: ['copy:audio'],
         spawn: false
       }
     }
@@ -150,6 +167,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
 
   // Default task.
-  grunt.registerTask('default', ['compass:dist', 'compass:shower', 'jshint', 'concat:client', 'uglify:client', 'concat:presentation', 'uglify:presentation', 'copy:main', 'copy:slides', 'copy:fonts']);
+  grunt.registerTask('default', ['compass:dist', 'compass:shower', 'jshint', 'concat:client', 'uglify:client', 'concat:presentation', 'uglify:presentation', 'copy:main', 'copy:html', 'copy:slides', 'copy:fonts', 'copy:audio']);
 
 };
