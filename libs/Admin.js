@@ -21,12 +21,12 @@ Admin.prototype.sendIp = function(ip){
 	this.socket.emit('ip', ip);
 };
 
-Admin.prototype.sendPlayerCount = function(playerCount) {
-	this.socket.emit('playerCount', playerCount);
+Admin.prototype.sendPlayerCounts = function(playerCounts) {
+	this.socket.emit('playerCounts', playerCounts);
 };
 
-Admin.prototype.sendLedStates = function(ledCounter, leds) {
-	this.socket.emit('ledStates', {counter: ledCounter, leds: leds});
+Admin.prototype.sendLedStates = function(team, ledCounter, leds) {
+	this.socket.emit('ledStates', {team: team, scans: ledCounter, leds: leds});
 };
 
 Admin.prototype.sendGameState = function(gameState) {

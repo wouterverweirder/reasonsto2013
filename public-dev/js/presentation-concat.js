@@ -1,4 +1,4 @@
-/*! knightrider - v0.0.1 - 2013-08-28
+/*! knightrider - v0.0.1 - 2013-08-29
 * Copyright (c) 2013 Wouter Verweirder; Licensed  */
 /*!
  * jQuery JavaScript Library v1.10.2
@@ -14097,16 +14097,22 @@ window.shower = window.shower || (function(window, document, undefined) {
 		socket = io.connect('/');
 		socket.on('connect', function(){
 		});
-		socket.on('playerCount', function(playerCount){
-			$('#playerCount').html(playerCount);
-		});
 		socket.on('ledStates', function(data){
-			$('#ledCounter').html(data.counter);
+			var $team = $('.team.' + data.team);
+			if($team) {
+				$team.find('.ledCounter').html(data.scans);
+			}
+		});
+		socket.on('playerCounts', function(data){
+			for(var i = 0; i < data.length; i++) {
+				var $team = $('.team.' + data[i].team);
+				if($team) {
+					$team.find('.playerCount').html(data[i].playerCount);
+				}
+			}
 		});
 		socket.on('ip', function(ip){
 			$('.ip-address').html(ip);
-		});
-		socket.on('admin', function(){
 		});
 		socket.on('gameState', onGameStateChanged);
 	}
@@ -14137,10 +14143,10 @@ window.shower = window.shower || (function(window, document, undefined) {
 		$startGameButton.toggle(gameState == GAME_STATES.WAITING || gameState == GAME_STATES.FINISHED);
 		$endGameButton.toggle(gameState == GAME_STATES.STARTED);
 		if(gameState == GAME_STATES.STARTED) {
-			$('#knightRiderTheme')[0].play();
+			//$('#knightRiderTheme')[0].play();
 		} else {
-			$('#knightRiderTheme')[0].pause();
-			$('#knightRiderTheme')[0].currentTime = 0;
+			//$('#knightRiderTheme')[0].pause();
+			//$('#knightRiderTheme')[0].currentTime = 0;
 		}
 	}
 

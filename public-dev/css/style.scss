@@ -22,20 +22,25 @@ html {
 body {
     display: table-cell;
     vertical-align: middle;
-	background-color: black;
+	background-color: white;
 	color: white;
 	font-family: 'Ruben';
 	text-align: center;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: -moz-none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 #background {
 	position: absolute;
 	left: 0;
 	top: 0;
+	right: 0;
+	bottom: 0;
 	z-index: 0;
-	width: 0%;
-	height: 100%;
-	background-color: red;
 }
 
 #container {

@@ -1,35 +1,29 @@
 var EventEmitter = require('events').EventEmitter;
 
-var PLAYER_STATES = {
-	WAIT_FOR_GAME_TO_START: 0,
-	WAIT_FOR_TURN: 1,
-	YOUR_TURN: 2,
-	GAME_FINISHED: 3
-};
-
-var Player = function(socket, playerState, nr) {
+var Game;
+var Player = function(gameClass, socket, gameState, team) {
+	Game = gameClass;
 	this.socket = socket;
-	this.nr = nr;
-	this.hasTriggered = false;
 	this.socket.on('disconnect', this.onDisconnect.bind(this));
 	this.socket.on('trigger', this.onTrigger.bind(this));
-	this.setPlayerState(playerState);
+	this.setGameState(gameState);
+	this.setTeam(team);
 };
 
 Player.prototype.__proto__ = EventEmitter.prototype;
 
-Player.prototype.setPlayerState = function(playerState, timeLeft, timeTotal) {
-	this.playerState = playerState;
-	this.socket.emit('playerState', {
-		state: this.playerState,
-		timeLeft: timeLeft,
-		timeTotal: timeTotal
-	});
+Player.prototype.setGameState = function(gameState) {
+	this.gameState = gameState;
+	this.socket.emit('gameState', this.gameState);
+};
+
+Player.prototype.setTeam = function(team) {
+	this.team = team;
+	this.socket.emit('team', this.team);
 };
 
 Player.prototype.onTrigger = function(){
-	if(this.playerState == PLAYER_STATES.YOUR_TURN) {
-		this.hasTriggered = true;
+	if(this.gameState == Game.GAME_STATES.STARTED) {
 		this.emit('trigger');
 	}
 };
@@ -37,7 +31,5 @@ Player.prototype.onTrigger = function(){
 Player.prototype.onDisconnect = function(){
 	this.emit('disconnect');
 };
-
-Player.PLAYER_STATES = PLAYER_STATES;
 
 exports.Player = Player;

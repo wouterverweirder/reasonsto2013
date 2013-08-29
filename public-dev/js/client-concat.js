@@ -1,4 +1,4 @@
-/*! knightrider - v0.0.1 - 2013-08-28
+/*! knightrider - v0.0.1 - 2013-08-29
 * Copyright (c) 2013 Wouter Verweirder; Licensed  */
 /*!
  * jQuery JavaScript Library v1.10.2
@@ -13119,45 +13119,51 @@ if (typeof define === "function" && define.amd) {
 })();
 (function(){
 	var socket = io.connect('/');
-	var PLAYER_STATES = {
-		WAIT_FOR_GAME_TO_START: 0,
-		WAIT_FOR_TURN: 1,
-		YOUR_TURN: 2,
-		GAME_FINISHED: 3
+	var GAME_STATES = {
+		WAITING: 0,
+		STARTED: 1,
+		FINISHED: 2
 	};
-	var playerState = PLAYER_STATES.WAIT_FOR_GAME_TO_START;
+	var gameState = GAME_STATES.WAITING;
+	var team;
 
-	$('body').on('touchstart click', function(e){
-		if(playerState == PLAYER_STATES.YOUR_TURN) {
+	$('body').on('touchstart mousedown', function(e){
+		$('#background').css('left', '10px');
+		$('#background').css('top', '10px');
+		$('#background').css('right', '10px');
+		$('#background').css('bottom', '10px');
+		if(gameState == GAME_STATES.STARTED) {
 			socket.emit('trigger');
 		}
+	});
+
+	$('body').on('touchend mouseup', function(e){
+		$('#background').css('left', '0px');
+		$('#background').css('top', '0px');
+		$('#background').css('right', '0px');
+		$('#background').css('bottom', '0px');
 	});
 
 	socket.on('connect', function(){
 	});
 
-	socket.on('playerState', function(value){
-		playerState = value.state;
-		switch(playerState) {
-			case PLAYER_STATES.WAIT_FOR_GAME_TO_START:
+	socket.on('team', function(value){
+		team = value;
+		$('#background').css('background-color', value);
+	});
+
+	socket.on('gameState', function(value){
+		gameState = value;
+		switch(gameState) {
+			case GAME_STATES.WAITING:
 				$('#gameState').text('wait for game to start');
 				break;
-			case PLAYER_STATES.WAIT_FOR_TURN:
-				$('#gameState').text('wait for your turn');
+			case GAME_STATES.STARTED:
+				$('#gameState').text('hit it');
 				break;
-			case PLAYER_STATES.YOUR_TURN:
-				setTimeLeft(value.timeLeft, value.timeTotal);
-				break;
-			case PLAYER_STATES.GAME_FINISHED:
+			case GAME_STATES.FINISHED:
 				$('#gameState').text('game finished');
 				break;
 		}
 	});
-
-	function setTimeLeft(timeLeft, timeTotal) {
-		$('#gameState').text('HIT IT');
-		$("#background").css('width', (timeLeft * 100 / timeTotal) + '%').animate({
-			width: '0%'
-		}, timeLeft, "linear");
-	}
 })();

@@ -27,16 +27,22 @@
 		socket = io.connect('/');
 		socket.on('connect', function(){
 		});
-		socket.on('playerCount', function(playerCount){
-			$('#playerCount').html(playerCount);
-		});
 		socket.on('ledStates', function(data){
-			$('#ledCounter').html(data.counter);
+			var $team = $('.team.' + data.team);
+			if($team) {
+				$team.find('.ledCounter').html(data.scans);
+			}
+		});
+		socket.on('playerCounts', function(data){
+			for(var i = 0; i < data.length; i++) {
+				var $team = $('.team.' + data[i].team);
+				if($team) {
+					$team.find('.playerCount').html(data[i].playerCount);
+				}
+			}
 		});
 		socket.on('ip', function(ip){
 			$('.ip-address').html(ip);
-		});
-		socket.on('admin', function(){
 		});
 		socket.on('gameState', onGameStateChanged);
 	}
@@ -67,10 +73,10 @@
 		$startGameButton.toggle(gameState == GAME_STATES.WAITING || gameState == GAME_STATES.FINISHED);
 		$endGameButton.toggle(gameState == GAME_STATES.STARTED);
 		if(gameState == GAME_STATES.STARTED) {
-			$('#knightRiderTheme')[0].play();
+			//$('#knightRiderTheme')[0].play();
 		} else {
-			$('#knightRiderTheme')[0].pause();
-			$('#knightRiderTheme')[0].currentTime = 0;
+			//$('#knightRiderTheme')[0].pause();
+			//$('#knightRiderTheme')[0].currentTime = 0;
 		}
 	}
 
