@@ -17,13 +17,6 @@ module.exports = function(grunt) {
           cssDir: 'public/css',
           environment: 'production'
         }
-      },
-      shower: {
-        options: {
-          sassDir: 'public-dev/shower/themes/ribbon/styles',
-          cssDir: 'public-dev/shower/themes/ribbon/styles',
-          environment: 'production'
-        }
       }
     },
     concat: {
@@ -43,7 +36,6 @@ module.exports = function(grunt) {
         src: [
           'public-dev/js/lib/jquery.js',
           'public-dev/js/lib/socket.io.js',
-          'public-dev/shower/shower.js',
           'public-dev/js/presentation.js'
         ],
         dest: 'public-dev/js/presentation-concat.js'
@@ -91,7 +83,7 @@ module.exports = function(grunt) {
       main: {
         expand: true,
         cwd: 'public-dev/',
-        src: ['shower/**'],
+        src: ['reveal.js/**'],
         dest: 'public/',
       },
       html: {
@@ -167,6 +159,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
 
   // Default task.
-  grunt.registerTask('default', ['compass:dist', 'compass:shower', 'jshint', 'concat:client', 'uglify:client', 'concat:presentation', 'uglify:presentation', 'copy:main', 'copy:html', 'copy:slides', 'copy:fonts', 'copy:audio']);
+  grunt.registerTask('default', ['compass:dist', 'jshint', 'concat:client', 'uglify:client', 'concat:presentation', 'uglify:presentation', 'copy:main', 'copy:html', 'copy:slides', 'copy:fonts', 'copy:audio']);
 
 };

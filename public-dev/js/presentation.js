@@ -14,6 +14,7 @@
 		initUI();
 		initSocket();
 		initCamera();
+		initTimer();
 	}
 
 	function initUI() {
@@ -56,6 +57,13 @@
 		}
 	}
 
+	function initTimer() {
+		$('.start').click(function(){
+			$('.start').hide();
+			$('.timer .progress').animate({width: '0%'}, 3 * 60 * 1000, 'linear');
+		});
+	}
+
 	function hasGetUserMedia() {
 	  return !!(navigator.getUserMedia || navigator.webkitGetUserMedia ||
 	            navigator.mozGetUserMedia || navigator.msGetUserMedia);
@@ -73,10 +81,10 @@
 		$startGameButton.toggle(gameState == GAME_STATES.WAITING || gameState == GAME_STATES.FINISHED);
 		$endGameButton.toggle(gameState == GAME_STATES.STARTED);
 		if(gameState == GAME_STATES.STARTED) {
-			//$('#knightRiderTheme')[0].play();
+			$('#knightRiderTheme')[0].play();
 		} else {
-			//$('#knightRiderTheme')[0].pause();
-			//$('#knightRiderTheme')[0].currentTime = 0;
+			$('#knightRiderTheme')[0].pause();
+			$('#knightRiderTheme')[0].currentTime = 0;
 		}
 	}
 

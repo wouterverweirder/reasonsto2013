@@ -4,77 +4,97 @@
     <title>Presentation</title>
     <meta name="viewport" content="width=1280, user-scalable=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <link href="/shower/themes/ribbon/styles/screen.css" rel="stylesheet" media="screen" />
+    <link href="/reveal.js/css/reveal.min.css" rel="stylesheet" media="screen" />
     <link href="/css/presentation.css" rel="stylesheet" media="screen" />
   </head>
-  <body class="list">
-    <header class="caption">
-    <h1>Elevator Pitch</h1>
-    <p>Wouter Verweirder</p>
-    </header>
-    <section class="slide cover"><div>
-        <img src="/slides/01.png" />
-        <div class="ip-address"></div>
-    </div></section>
+  <body>
 
-    <section class="slide cover"><div>
-      <img src="/slides/02.png" />
-      <div class="ip-address"></div>
-    </div></section>
+    <div class="timer"><div class="progress"></div></div>
 
-    <section class="slide cover"><div>
-      <img src="/slides/03.png" />
-      <div class="ip-address"></div>
-    </div></section>
+    <div class="reveal">
+      <div class="slides">
 
-    <section class="slide cover"><div>
-      <img src="/slides/04.png" />
-      <div class="ip-address"></div>
-    </div></section>
+        <section>
+          <img src="/slides/01.png" />
+          <div class="ip-address"></div>
+          <div class="start"></div>
+        </section>
 
-    <section class="slide cover"><div>
-      <img src="/slides/05.png" />
-      <div class="ip-address"></div>
-    </div></section>
+        <section>
+          <img src="/slides/02.png" />
+          <div class="ip-address"></div>
+        </section>
 
-    <section class="slide cover"><div>
-      <img src="/slides/06.png" />
-      <div class="ip-address"></div>
-    </div></section>
+        <section>
+          <img src="/slides/03.png" />
+          <div class="ip-address"></div>
+        </section>
 
-    <section class="slide cover"><div>
-      <img src="/slides/07.png" />
-      <div class="ip-address"></div>
-    </div></section>
+        <section>
+          <img src="/slides/04.png" />
+          <div class="ip-address"></div>
+        </section>
 
-    <section class="slide cover" id="gameSlide"><div>
-      <video id="cameraVideo" autoplay></video>
-      <audio id="knightRiderTheme">
-        <source src="/audio/knight-rider-theme.mp3"/>
-      </audio>
-      <div class="game-container">
-        <div>
-          <div class="team black">
-            <div class="players"><span class="playerCount">0</span> players connected</div>
-            <div class="scans">Scans executed: <span class="ledCounter">0</span></div>
+        <section>
+          <img src="/slides/05.png" />
+          <div class="ip-address"></div>
+        </section>
+
+        <section>
+          <img src="/slides/06.png" />
+          <div class="ip-address"></div>
+        </section>
+
+        <section>
+          <video data-autoplay>
+            <source src="/slides/leap.mp4" type="video/mp4">
+          </video>
+          <div class="ip-address"></div>
+        </section>
+
+        <section id="gameSlide"><div>
+          <video id="cameraVideo" data-autoplay></video>
+          <audio id="knightRiderTheme">
+            <source src="/audio/knight-rider-theme.mp3"/>
+          </audio>
+          <div class="game-container">
+            <div>
+              <div class="team black">
+                <div class="players"><span class="playerCount">0</span> players connected</div>
+                <div class="scans">Scans executed: <span class="ledCounter">0</span></div>
+              </div>
+              <div class="button-container">
+                <button id="startGameButton">Start K.I.T.T.</button>
+                <button id="endGameButton">Stop K.I.T.T.</button>
+              </div>
+              <div class="team blue">
+                <div class="players"><span class="playerCount">0</span> players connected</div>
+                <div class="scans">Scans executed: <span class="ledCounter">0</span></div>
+              </div>
+            </div>
           </div>
-          <div class="button-container">
-            <button id="startGameButton">Start K.I.T.T.</button>
-            <button id="endGameButton">Stop K.I.T.T.</button>
-          </div>
-          <div class="team blue">
-            <div class="players"><span class="playerCount">0</span> players connected</div>
-            <div class="scans">Scans executed: <span class="ledCounter">0</span></div>
-          </div>
-        </div>
+          <div class="ip-address"></div>
+        </section>
+
+        <section>
+          <img src="/slides/07.png" />
+        </section>
       </div>
-      <div class="ip-address"></div>
-    </div></section>
+    </div>
 
-    <section class="slide cover"><div>
-      <img src="/slides/08.png" />
-    </div></section>
-
-    <script type="text/javascript" src="/js/presentation.min.js"></script>
+    <script src="/reveal.js/lib/js/head.min.js"></script>
+    <script src="/reveal.js/js/reveal.js"></script>
+    <script>
+      Reveal.initialize({
+        controls: false,
+        progress: false,
+        history: true,
+        width: 1280,
+        height: 720,
+        margin: 0.0,
+        transition: 'linear'
+      });
+    </script>
+    <script src="/js/presentation.min.js"></script>
   </body>
 </html>

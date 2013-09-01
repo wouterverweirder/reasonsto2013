@@ -43,7 +43,7 @@ Game.prototype.createCar = function(pins, team) {
 };
 
 Game.prototype.startServer = function() {
-	server.listen(8888);
+	server.listen(80);
 	app.use(express.static(path.join(__dirname, '..', 'public')));
 	app.get('/', function(req, res){
 		res.sendfile(path.join(__dirname, '..', 'public', 'index.html'));

@@ -1,4 +1,4 @@
-/*! knightrider - v0.0.1 - 2013-08-29
+/*! knightrider - v0.0.1 - 2013-08-31
 * Copyright (c) 2013 Wouter Verweirder; Licensed  */
 /*!
  * jQuery JavaScript Library v1.10.2
