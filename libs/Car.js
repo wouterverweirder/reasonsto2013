@@ -20,6 +20,8 @@ var Car = function(GameClass, board, leds, team, gameState) {
 	}
 	this.players = [];
 	this.numPlayers = 0;
+	this.speed = 1000;
+	this.nextLedTimeout = setTimeout(this.onNextLed.bind(this), this.speed);
 };
 
 Car.prototype.__proto__ = EventEmitter.prototype;
@@ -65,22 +67,34 @@ Car.prototype.onGameStateStarted = function() {
 	this.ledCounter = 0;
 	this.activeLedCounter = 0;
 	this.activeLedDirection = 1;
+	this.speed = 1000;
 	this.onLedCounterChanged();
 	for(var i = 0; i < this.numPlayers; i++) {
 		this.players[i].setGameState(this.gameState);
 	}
 };
 
+Car.prototype.onNextLed = function() {
+	this.speed *= 1.2;
+	if(this.speed > 1000) {
+		this.speed = 1000;
+	} else if(this.speed < 100) {
+		this.speed = 100;
+	}
+	this.activeLedCounter += this.activeLedDirection;
+	if(this.activeLedCounter <= 0 || (this.activeLedCounter + 1) >= this.numLeds) {
+		this.activeLedDirection *= -1;
+	}
+	this.onLedCounterChanged();
+	this.nextLedTimeout = setTimeout(this.onNextLed.bind(this), this.speed);	
+};
+
 Car.prototype.onPlayerTrigger = function() {
 	this.numTriggers++;
 	if(this.numTriggers > this.numPlayers) {
-		this.numTriggers = 0;
 		this.ledCounter++;
-		this.activeLedCounter += this.activeLedDirection;
-		if(this.activeLedCounter <= 0 || (this.activeLedCounter + 1) >= this.numLeds) {
-			this.activeLedDirection *= -1;
-		}
-		this.onLedCounterChanged();
+		this.numTriggers = 0;
+		this.speed *= 0.7;
 	}
 };
 

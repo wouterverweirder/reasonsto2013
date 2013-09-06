@@ -12,7 +12,8 @@ var GAME_STATES = {
 	FINISHED: 2
 };
 
-var Game = function(board) {
+var Game = function(port, board) {
+	this.port = port;
 	this.board = board;
 	this.gameState = GAME_STATES.WAITING;
 	this.cars = [];
@@ -43,7 +44,7 @@ Game.prototype.createCar = function(pins, team) {
 };
 
 Game.prototype.startServer = function() {
-	server.listen(80);
+	server.listen(this.port);
 	app.use(express.static(path.join(__dirname, '..', 'public')));
 	app.get('/', function(req, res){
 		res.sendfile(path.join(__dirname, '..', 'public', 'index.html'));
